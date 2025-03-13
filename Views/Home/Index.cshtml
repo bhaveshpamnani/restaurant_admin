@@ -3,472 +3,229 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@if (!User.Identity.IsAuthenticated)
+{
+    Context.Response.Redirect("/Account/Login"); // Change the path based on your login route
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
 <!-- Content wrapper -->
 <div class="content-wrapper">
     <!-- Content -->
 
     <div class=" flex-grow-1 container-p-y">
+        @model Theam.Models.DashBoardViewModel
+
         <div class="row">
-        <div class="container">
-            <div class="row">
-                <!--Total User Card -->
-                <div class="col-lg-3 col-md-3 col-sm-4 col-6 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="card-title d-flex align-items-start justify-content-between mb-4">
-                                <div class="avatar flex-shrink-0">
-                                    <img src="~/assets/img/icons/unicons/group.png" alt="Users" class="rounded" />
-                                </div>
-                                <div class="dropdown">
-                                    <button class="btn p-0" type="button" id="cardOpt1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="bx bx-dots-vertical-rounded text-muted"></i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt1">
-                                        <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                                        <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+            <div class="container">
+                <div class="row">
+                    @foreach (var metric in Model.Counts)
+                    {
+                        string icon = metric.Metric switch
+                        {
+                            "TotalUser" => "group.png",
+                            "TotalOrders" => "cargo.png",
+                            "TotalPendingOrders" => "order-history.png",
+                            "TotalConfirmOrders" => "bag.png",
+                            "TotalPendingReservation" => "restaurant.png",
+                            "TotalConfirmReservation" => "delivery-man.png",
+                            "TotalAvailableTable" => "dining-room.png",
+                            "TotalConfirmTable" => "reserved.png",
+                            _ => "default.png"
+                        };
+
+                        <div class="col-lg-3 col-md-3 col-sm-4 col-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="card-title d-flex align-items-start justify-content-between mb-4">
+                                        <div class="avatar flex-shrink-0">
+                                            <img src="~/assets/img/icons/unicons/@icon" alt="@metric.Metric" class="rounded" />
+                                        </div>
+                                        <div class="dropdown">
+                                            <button class="btn p-0" type="button" data-bs-toggle="dropdown">
+                                                <i class="bx bx-dots-vertical-rounded text-muted"></i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a class="dropdown-item" href="#">View More</a>
+                                                <a class="dropdown-item" href="#">Delete</a>
+                                            </div>
+                                        </div>
                                     </div>
+                                    <p class="mb-1">@metric.Metric.Replace("Total", " ")</p>
+                                    <h4 class="card-title mb-3">@metric.Value</h4>
                                 </div>
                             </div>
-                            <p class="mb-1">Total User</p>
-                            <h4 class="card-title mb-3">628</h4>
-                            <small class="text-success fw-medium"><i class="bx bx-up-arrow-alt"></i> +72.80%</small>
                         </div>
-                    </div>
-                </div>
-                <!-- Total Order card -->
-                <div class="col-lg-3 col-md-3 col-sm-4 col-6 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="card-title d-flex align-items-start justify-content-between mb-4">
-                                <div class="avatar flex-shrink-0">
-                                    <img src="~/assets/img/icons/unicons/cargo.png" alt="Total Order " class="rounded" />
-                                </div>
-                                <div class="dropdown">
-                                    <button class="btn p-0" type="button" id="cardOpt2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="bx bx-dots-vertical-rounded text-muted"></i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt2">
-                                        <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                                        <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="mb-1">Total Orders</p>
-                            <h4 class="card-title mb-3">743</h4>
-                            <small class="text-success fw-medium"><i class="bx bx-up-arrow-alt"></i> +72.80%</small>
-                        </div>
-                    </div>
-                </div>
-                <!-- Pending Order card -->
-                <div class="col-lg-3 col-md-3 col-sm-4 col-6 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="card-title d-flex align-items-start justify-content-between mb-4">
-                                <div class="avatar flex-shrink-0">
-                                    <img src="~/assets/img/icons/unicons/order-history.png" alt="ending Order " class="rounded" />
-                                </div>
-                                <div class="dropdown">
-                                    <button class="btn p-0" type="button" id="cardOpt2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="bx bx-dots-vertical-rounded text-muted"></i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt2">
-                                        <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                                        <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="mb-1">Pending Orders</p>
-                            <h4 class="card-title mb-3">28</h4>
-                            <small class="text-success fw-medium"><i class="bx bx-up-arrow-alt"></i> +72.80%</small>
-                        </div>
-                    </div>
-                </div>
-                <!-- Confirm Orders Card -->
-                <div class="col-lg-3 col-md-3 col-sm-4 col-6 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="card-title d-flex align-items-start justify-content-between mb-4">
-                                <div class="avatar flex-shrink-0">
-                                    <img src="~/assets/img/icons/unicons/bag.png" alt="Confirm Orders" class="rounded" />
-                                </div>
-                                <div class="dropdown">
-                                    <button class="btn p-0" type="button" id="cardOpt2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="bx bx-dots-vertical-rounded text-muted"></i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt2">
-                                        <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                                        <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="mb-1">Confirm Orders</p>
-                            <h4 class="card-title mb-3">628</h4>
-                            <small class="text-success fw-medium"><i class="bx bx-up-arrow-alt"></i> +72.80%</small>
-                        </div>
-                    </div>
+                    }
                 </div>
             </div>
         </div>
-            <div class="container">
-                <div class="row">
-                    <!-- Pending Reservations Card -->
-                    <div class="col-lg-3 col-md-3 col-sm-4 col-6 mb-3">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <div class="card-title d-flex align-items-start justify-content-between mb-4">
-                                    <div class="avatar flex-shrink-0">
-                                        <img src="~/assets/img/icons/unicons/restaurant.png" alt="Pending Reservations" class="rounded" />
-                                    </div>
-                                    <div class="dropdown">
-                                        <button class="btn p-0" type="button" id="cardOpt2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="bx bx-dots-vertical-rounded text-muted"></i>
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt2">
-                                            <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="mb-1">Pending Reservations</p>
-                                <h4 class="card-title mb-3">26</h4>
-                                <small class="text-success fw-medium"><i class="bx bx-up-arrow-alt"></i> +72.80%</small>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Confirm Reservations Card -->
-                    <div class="col-lg-3 col-md-3 col-sm-4 col-6 mb-3">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <div class="card-title d-flex align-items-start justify-content-between mb-4">
-                                    <div class="avatar flex-shrink-0">
-                                        <img src="~/assets/img/icons/unicons/delivery-man.png" alt="Confirm Reservations" class="rounded" />
-                                    </div>
-                                    <div class="dropdown">
-                                        <button class="btn p-0" type="button" id="cardOpt2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="bx bx-dots-vertical-rounded text-muted"></i>
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt2">
-                                            <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="mb-1">Confirm Reservations</p>
-                                <h4 class="card-title mb-3">28</h4>
-                                <small class="text-danger fw-medium" ><i class="bx bx-down-arrow-alt" style="color: red"></i> +72.80%</small>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Available Table Card -->
-                    <div class="col-lg-3 col-md-3 col-sm-4 col-6 mb-3">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <div class="card-title d-flex align-items-start justify-content-between mb-4">
-                                    <div class="avatar flex-shrink-0">
-                                        <img src="~/assets/img/icons/unicons/dining-room.png" alt="chart success" class="rounded" />
-                                    </div>
-                                    <div class="dropdown">
-                                        <button class="btn p-0" type="button" id="cardOpt2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="bx bx-dots-vertical-rounded text-muted"></i>
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt2">
-                                            <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="mb-1">Available Table</p>
-                                <h4 class="card-title mb-3">6</h4>
-                                <small class="text-success fw-medium"><i class="bx bx-up-arrow-alt"></i> +72.80%</small>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- reserved Table Card -->
-                    <div class="col-lg-3 col-md-3 col-sm-4 col-6 mb-3">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <div class="card-title d-flex align-items-start justify-content-between mb-4">
-                                    <div class="avatar flex-shrink-0">
-                                        <img src="~/assets/img/icons/unicons/reserved.png" alt="reserved Table" class="rounded" />
-                                    </div>
-                                    <div class="dropdown">
-                                        <button class="btn p-0" type="button" id="cardOpt2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="bx bx-dots-vertical-rounded text-muted"></i>
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt2">
-                                            <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                                            <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="mb-1">reserved Table</p>
-                                <h4 class="card-title mb-3">3</h4>
-                                <small class="text-success fw-medium"><i class="bx bx-up-arrow-alt"></i> +72.80%</small>
-                            </div>
-                        </div>
+
+
+        <!-- Product List Table -->
+        <div class="card">
+            <div class="row justify-content-between">
+                <div class="d-md-flex justify-content-between align-items-center dt-layout-start col-md-auto">
+                    <div class="dt-search m-2 mt-5">
+                        <input type="search" class="form-control ms-0" id="dt-search-0" placeholder="Search Menu Item" aria-controls="DataTables_Table_0"><label for="dt-search-0"></label>
                     </div>
                 </div>
-            </div>
-            <!-- Total Revenue -->
-            <div class="col-12 col-xxl-12 order-2 order-md-3 order-xxl-2 mb-6">
-                <div class="card">
-                    <div class="row row-bordered g-0">
-                        <div class="col-lg-8">
-                            <div class="card-header d-flex align-items-center justify-content-between">
-                                <div class="card-title mb-0">
-                                    <h5 class="m-0 me-2">Total Revenue</h5>
-                                </div>
-                                <div class="dropdown">
-                                    <button class="btn p-0" type="button" id="totalRevenue" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                        <i class="bx bx-dots-vertical-rounded bx-lg text-muted"></i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="totalRevenue">
-                                        <a class="dropdown-item" href="javascript:void(0);">Select All</a>
-                                        <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                                        <a class="dropdown-item" href="javascript:void(0);">Share</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="totalRevenueChart" class="px-3"></div>
-                        </div>
-                        <div class="col-lg-4 d-flex align-items-center">
-                            <div class="card-body px-xl-9">
-                                <div class="text-center mb-6">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-outline-primary">
-                                            <script>
-                                                document.write(new Date().getFullYear() - 1);
-                                            </script>
-                                        </button>
-                                        <button type="button" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split"
-                                                data-bs-toggle="dropdown" aria-expanded="false">
-                                            <span class="visually-hidden">Toggle Dropdown</span>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="javascript:void(0);">2021</a></li>
-                                            <li><a class="dropdown-item" href="javascript:void(0);">2020</a></li>
-                                            <li><a class="dropdown-item" href="javascript:void(0);">2019</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-
-                                <div id="growthChart"></div>
-                                <div class="text-center fw-medium my-6">62% Company Growth</div>
-
-                                <div class="d-flex gap-3 justify-content-between">
-                                    <div class="d-flex">
-                                        <div class="avatar me-2">
-                              <span class="avatar-initial rounded-2 bg-label-primary"><i
-                                      class="bx bx-dollar bx-lg text-primary"></i></span>
-                                        </div>
-                                        <div class="d-flex flex-column">
-                                            <small>
-                                                <script>
-                                                    document.write(new Date().getFullYear() - 1);
-                                                </script>
-                                            </small>
-                                            <h6 class="mb-0">$32.5k</h6>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex">
-                                        <div class="avatar me-2">
-                              <span class="avatar-initial rounded-2 bg-label-info"><i
-                                      class="bx bx-wallet bx-lg text-info"></i></span>
-                                        </div>
-                                        <div class="d-flex flex-column">
-                                            <small>
-                                                <script>
-                                                    document.write(new Date().getFullYear() - 2);
-                                                </script>
-                                            </small>
-                                            <h6 class="mb-0">$41.2k</h6>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="d-md-flex justify-content-between align-items-center dt-layout-end col-md-auto ms-auto px-3 mt-0">
+                    <div class="col-md-6 px-2  product_category">
+                        <select id="ProductCategory" class="form-select text-capitalize">
+                            <option value="">Category</option><option value="Household">Household</option><option value="Office">Office</option><option value="Electronics">Electronics</option><option value="Shoes">Shoes</option><option value="Accessories">Accessories</option><option value="Game">Game</option>
+                        </select>
+                    </div>
+                    <div class="d-flex justify-content-end p-1 align-items-center">
+                        <button class="btn btn-primary d-flex justify-content-center" data-bs-toggle="modal" data-bs-target="#addInventoryItemModal">
+                            <i class="bx bx-plus"></i> Add Inventory Item
+                        </button>
                     </div>
                 </div>
-            </div>
-            <!--/ Total Revenue -->
-            </div>
-        <!--Inventory -->
-        <div class="row">
-            <div class="col-xxl-12 mb-0">
-                <div class="card">
-                    <div class="card-datatable table-responsive">
-                        <table class="invoice-list-table table table-border-top-0">
-                            <thead>
+
+                <div class="justify-content-between dt-layout-table ">
+                    <div class="d-md-flex justify-content-between align-items-center dt-layout-full table-responsive">
+                        <table class="table table-striped table-bordered table-hover text-center">
+                            <thead class="table-dark">
                             <tr>
                                 <th>Inventory Item</th>
-                                <th class="text-center">Amount</th>
                                 <th class="text-center">Available Count</th>
                                 <th class="text-center">Wanted Count</th>
                                 <th class="cell-fit">Actions</th>
                             </tr>
                             </thead>
-                            <tbody class="table-border-bottom-0">
-                            <tr>
-                                <td>
-                                    <div class="d-flex justify-content-start align-items-center">
-                                        <div class="avatar-wrapper">
-                                            <div class="avatar avatar-sm me-2">
-                                                <img src="~/assets/img/icons/unicons/carrots.png" alt="Avatar" class="rounded-circle">
+                            <tbody>
+                            @foreach (var item in Model.Inventory)
+                            {
+                                <tr>
+                                    <td class="sorting_1">
+                                        <div class="d-flex justify-content-start align-items-center product-name">
+                                            <div class="avatar-wrapper">
+                                                <div class="avatar avatar me-2 me-sm-4 rounded-2 bg-label-secondary">
+                                                    <img src="@item.ImageURl" alt="Product-9" class="rounded">
+                                                </div>
                                             </div>
+                                            <h6 class="text-nowrap mb-0">@item.ItemName</h6>
                                         </div>
-                                        <div class="d-flex flex-column text-center">
-                                            <a class="text-heading text-truncate fw-medium">Carrot</a>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-center">₹59.65</td>
-                                <td class="text-center">100</td>
-                                <td class="text-danger text-center">10</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="dropdown">
-                                            <a href="javascript:;" class="btn dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded icon-md text-body"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a href="javascript:void(0);" class="dropdown-item">Edit</a>
-                                                <a href="javascript:;" class="dropdown-item">Duplicate</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a href="javascript:;" class="dropdown-item delete-record text-danger">Delete</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex justify-content-start align-items-center">
-                                        <div class="avatar-wrapper">
-                                            <div class="avatar avatar-sm me-2">
-                                                <img src="~/assets/img/icons/unicons/bell-pepper.png" alt="Avatar" class="rounded-circle">
-                                            </div>
-                                        </div>
-                                        <div class="d-flex flex-column text-center">
-                                            <a class="text-heading text-truncate fw-medium">Bell Pepper</a>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-center">₹59.65</td>
-                                <td class="text-center">100</td>
-                                <td class="text-center">0</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="dropdown">
-                                            <a href="javascript:;" class="btn dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded icon-md text-body"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a href="javascript:void(0);" class="dropdown-item">Edit</a>
-                                                <a href="javascript:;" class="dropdown-item">Duplicate</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a href="javascript:;" class="dropdown-item delete-record text-danger">Delete</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex justify-content-start align-items-center">
-                                        <div class="avatar-wrapper">
-                                            <div class="avatar avatar-sm me-2">
-                                                <img src="~/assets/img/icons/unicons/eggplant.png" alt="Avatar" class="rounded-circle">
-                                            </div>
-                                        </div>
-                                        <div class="d-flex flex-column text-center">
-                                            <a class="text-heading text-truncate fw-medium">Eggplant</a>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-center">₹59.65</td>
-                                <td class="text-center">100</td>
-                                <td class="text-danger text-center">10</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="dropdown">
-                                            <a href="javascript:;" class="btn dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded icon-md text-body"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a href="javascript:void(0);" class="dropdown-item">Edit</a>
-                                                <a href="javascript:;" class="dropdown-item">Duplicate</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a href="javascript:;" class="dropdown-item delete-record text-danger">Delete</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex justify-content-start align-items-center">
-                                        <div class="avatar-wrapper">
-                                            <div class="avatar avatar-sm me-2">
-                                                <img src="~/assets/img/icons/unicons/pumpkin.png" alt="Avatar" class="rounded-circle">
-                                            </div>
-                                        </div>
-                                        <div class="d-flex flex-column text-center">
-                                            <a class="text-heading text-truncate fw-medium">Pumpkin</a>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-center">₹59.65</td>
-                                <td class="text-center">100</td>
-                                <td class="text-center">0</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="dropdown">
-                                            <a href="javascript:;" class="btn dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded icon-md text-body"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a href="javascript:void(0);" class="dropdown-item">Edit</a>
-                                                <a href="javascript:;" class="dropdown-item">Duplicate</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a href="javascript:;" class="dropdown-item delete-record text-danger">Delete</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex justify-content-start align-items-center">
-                                        <div class="avatar-wrapper">
-                                            <div class="avatar avatar-sm me-2">
-                                                <img src="~/assets/img/icons/unicons/tomato.png" alt="Avatar" class="rounded-circle">
-                                            </div>
-                                        </div>
-                                        <div class="d-flex flex-column text-center">
-                                            <a class="text-heading text-truncate fw-medium">Tomato</a>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-center">₹59.65</td>
-                                <td class="text-center">100</td>
-                                <td class="text-danger text-center">10</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="dropdown">
-                                            <a href="javascript:;" class="btn dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded icon-md text-body"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a href="javascript:void(0);" class="dropdown-item">Edit</a>
-                                                <a href="javascript:;" class="dropdown-item">Duplicate</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a href="javascript:;" class="dropdown-item delete-record text-danger">Delete</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                                    </td>
+                                    <td class="text-center">@item.QuantityAvailable</td>
+                                    <td class="@(item.QuantityWanted > 0 ? "text-danger text-center" : "text-center")">@item.QuantityWanted</td>
+
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editInventoryItemModal"
+                                            onclick="openEditModal('@item.InventoryID', '@item.ItemName', '@item.QuantityAvailable', '@item.QuantityWanted', '@item.ImageURl')">
+                                            Edit
+                                        </button>
+                                        <form method="post" asp-action="DeleteInventoryItem" onsubmit="return confirm('Are you sure?')">
+                                            <input type="hidden" name="id" value="@item.InventoryID" />
+                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- /Inventory -->
+    </div>
+
+    <!-- Add Inventory Item Modal -->
+    <div class="modal fade" id="addInventoryItemModal" tabindex="-1" aria-labelledby="addInventoryItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Inventory Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form asp-action="AddInventoryItem" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label">Item Name</label>
+                            <input type="text" name="ItemName" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">QuantityAvailable</label>
+                            <input type="number" name="QuantityAvailable" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">QuantityWanted</label>
+                            <input type="number" name="QuantityWanted" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Upload Image</label>
+                            <input type="file" name="ImageURL" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Menu Item</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Edit Menu Item Modal -->
+    <div class="modal fade" id="editInventoryItemModal" tabindex="-1" aria-labelledby="editInventoryItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Inventory Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form asp-action="UpdateInventoryItem" method="post" enctype="multipart/form-data">
+                        <input type="hidden" id="editInventoryID" name="InventoryID">
+                        <input type="hidden" id="editImagePath" name="ImageString">
+
+                        <div class="mb-3">
+                            <label class="form-label">Item Name</label>
+                            <input type="text" id="editItemName" name="ItemName" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">QuantityAvailable</label>
+                            <input type="number" id="editQuantityAvailable" name="QuantityAvailable" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">QuantityWanted</label>
+                            <input type="number" id="editQuantityWanted" name="QuantityWanted" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Current Image</label>
+                            <img id="editCurrentImage" src="" alt="Menu Item Image" style="width: 100px; height: auto;">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Upload New Image (Optional)</label>
+                            <input type="file" name="ImageURL" class="form-control">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- / Content -->
-
     <div class="content-backdrop fade"></div>
 </div>
-<!-- Content wrapper -->
+<script>
+    function openEditModal(inventoryId, itemName, quantityAvailable, quantityWanted, imageUrl) {
+        document.getElementById("editInventoryID").value = inventoryId;
+        document.getElementById("editItemName").value = itemName;
+        document.getElementById("editQuantityAvailable").value = quantityAvailable;
+        document.getElementById("editQuantityWanted").value = quantityWanted;
+        document.getElementById('editCurrentImage').src = imageUrl;
+        document.getElementById('editImagePath').value = imageUrl; // Store existing image path
+
+        var editModal = new bootstrap.Modal(document.getElementById('editInventoryItemModal'));
+        editModal.show();
+    }
+</script>

@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/bhavesh/Downloads/Theam/Theam.csproj": {}
+    "/Users/bhaveshpamnani/Documents/Theam/Theam.csproj": {}
   },
   "projects": {
-    "/Users/bhavesh/Downloads/Theam/Theam.csproj": {
+    "/Users/bhaveshpamnani/Documents/Theam/Theam.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/bhavesh/Downloads/Theam/Theam.csproj",
+        "projectUniqueName": "/Users/bhaveshpamnani/Documents/Theam/Theam.csproj",
         "projectName": "Theam",
-        "projectPath": "/Users/bhavesh/Downloads/Theam/Theam.csproj",
-        "packagesPath": "/Users/bhavesh/.nuget/packages/",
-        "outputPath": "/Users/bhavesh/Downloads/Theam/obj/",
+        "projectPath": "/Users/bhaveshpamnani/Documents/Theam/Theam.csproj",
+        "packagesPath": "/Users/bhaveshpamnani/.nuget/packages/",
+        "outputPath": "/Users/bhaveshpamnani/Documents/Theam/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/bhavesh/.nuget/NuGet/NuGet.Config"
+          "/Users/bhaveshpamnani/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -32,6 +32,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -62,7 +67,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.405/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/Users/bhaveshpamnani/.dotnet/sdk/8.0.404/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
