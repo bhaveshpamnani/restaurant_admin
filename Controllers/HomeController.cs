@@ -82,53 +82,53 @@ namespace Theam.Controllers
             return RedirectToAction("Index");
         }
         
-        public async Task<IActionResult> UpdateInventoryItem(InventoryEditModel inventoryItem)
-        {
-            if (ModelState.IsValid)
-            {
-                var content = new MultipartFormDataContent();
+       [HttpPost]
+public async Task<IActionResult> UpdateInventoryItem(InventoryEditModel inventoryItem)
+{
+    if (ModelState.IsValid)
+    {
+         var content = new MultipartFormDataContent();
+         content.Add(new StringContent(inventoryItem.InventoryID.ToString()), "InventoryID");
+         content.Add(new StringContent(inventoryItem.ItemName), "ItemName");
+         content.Add(new StringContent(inventoryItem.QuantityAvailable.ToString()), "QuantityAvailable");
+         content.Add(new StringContent(inventoryItem.QuantityWanted.ToString()), "QuantityWanted");
 
-                content.Add(new StringContent(inventoryItem.InventoryID.ToString()), "InventoryID");
-                content.Add(new StringContent(inventoryItem.ItemName), "ItemName");
-                content.Add(new StringContent(inventoryItem.QuantityAvailable.ToString()), "QuantityAvailable");
-                content.Add(new StringContent(inventoryItem.QuantityWanted.ToString()), "QuantityWanted");
+         if (inventoryItem.Image != null)
+         {
+             var fileContent = new StreamContent(inventoryItem.Image.OpenReadStream());
+             fileContent.Headers.ContentType = new MediaTypeHeaderValue(inventoryItem.Image.ContentType);
+             content.Add(fileContent, "ImageURL", inventoryItem.Image.FileName); // File input is named "Image"
+         }
+         else
+         {
+             // Use the existing image URL passed in the hidden field (make sure it binds to ImageURL)
+             content.Add(new StringContent(inventoryItem.ImageURL ?? string.Empty), "ImageURL");
+         }
 
-                if (inventoryItem.ImageURL != null)
-                {
-                    var fileContent = new StreamContent(inventoryItem.ImageURL.OpenReadStream());
-                    fileContent.Headers.ContentType = new MediaTypeHeaderValue(inventoryItem.ImageURL.ContentType);
-                    content.Add(fileContent, "Image", inventoryItem.ImageURL.FileName); // ✅ Fix: Ensure name matches backend
-                }
-                else
-                {
-                    content.Add(new StringContent(inventoryItem.ImageString), "ImageURL");
-                }
+         var request = new HttpRequestMessage(HttpMethod.Put, "http://localhost:5128/api/Inventory")
+         {
+             Content = content
+         };
 
-                var request = new HttpRequestMessage(HttpMethod.Put, "http://localhost:5128/api/Inventory")
-                {
-                    Content = content
-                };
+         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("multipart/form-data"));
 
-                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("multipart/form-data")); // ✅ Fix: Ensure correct content type
+         var response = await _httpClient.SendAsync(request);
 
-                var response = await _httpClient.SendAsync(request);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    TempData["SuccessMessage"] = "Inventory item updated successfully!";
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    var errorMessage = await response.Content.ReadAsStringAsync();
-                    TempData["ErrorMessage"] = $"Error updating Inventory item: {errorMessage}";
-                    return RedirectToAction("Index");
-                }
-            }
-
-            TempData["ErrorMessage"] = "Invalid data. Please check the form.";
-            return RedirectToAction("Index");
-        }
+         if (response.IsSuccessStatusCode)
+         {
+             TempData["SuccessMessage"] = "Inventory item updated successfully!";
+             return RedirectToAction("Index");
+         }
+         else
+         {
+             var errorMessage = await response.Content.ReadAsStringAsync();
+             TempData["ErrorMessage"] = $"Error updating Inventory item: {errorMessage}";
+             return RedirectToAction("Index");
+         }
+    }
+    TempData["ErrorMessage"] = "Invalid data. Please check the form.";
+    return RedirectToAction("Index");
+}
 
         
         [HttpPost]

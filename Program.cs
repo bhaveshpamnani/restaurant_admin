@@ -1,38 +1,35 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ Add services to the container before calling `builder.Build()`
-builder.Services.AddHttpClient();
+// ✅ Register Services
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
-// ✅ Add authentication (before builder.Build)
+// ✅ Authentication
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", options =>
     {
-        options.LoginPath = "/Account/Login"; 
-        options.AccessDeniedPath = "/Account/AccessDenied"; 
-        options.ExpireTimeSpan = TimeSpan.FromDays(7);  // 🔹 Keeps user logged in for 7 days
-        options.SlidingExpiration = true;  // 🔹 Extends session if user is active
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddHttpClient();
 
-var app = builder.Build(); // 🔹 No modifications to `builder.Services` after this point
+var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHsts();
-}
-
+// ✅ Middleware Order Matters
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
-// 🔹 Ensures cookie policies are properly handled
-app.UseCookiePolicy();
-
-// ✅ Authentication should be before Authorization
+app.UseSession(); // ✅ Ensure session is added before authentication
 app.UseAuthentication();
 app.UseAuthorization();
 

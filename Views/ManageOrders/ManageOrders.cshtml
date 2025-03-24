@@ -6,7 +6,32 @@
 }
 
 <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="card">
+    <div class="card p-3">
+        <!-- Filter Options -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <label for="order-status-filter" class="form-label"><strong>Filter by Order Status:</strong></label>
+                <select id="order-status-filter" class="form-select">
+                    <option value="all">All</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Processing">Processing</option>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="payment-status-filter" class="form-label"><strong>Filter by Payment Status:</strong></label>
+                <select id="payment-status-filter" class="form-select">
+                    <option value="all">All</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Failed">Failed</option>
+                </select>
+            </div>
+        </div>
+
         <div class="card-datatable table-responsive">
             <table class="table table-striped text-center">
                 <thead class="table-dark">
@@ -19,16 +44,15 @@
                     <th>Actions</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="order-table-body">
                 @foreach (var order in Model)
                 {
-                    <tr>
+                    <tr class="order-row" data-order-status="@order.OrderStatus" data-payment-status="@order.PaymentStatus">
                         <td>#@order.OrderID</td>
                         <td>@order.CreatedAt</td>
                         <td>
                             <div class="d-flex align-items-center">
                                 <strong>@order.UserName</strong>
-                                <br /><small>@order.UserEmail</small>
                             </div>
                         </td>
                         <td>
@@ -37,7 +61,7 @@
                             </span>
                         </td>
                         <td>
-                            <span class="badge @(order.OrderStatus == "Pending" ? "bg-warning" : order.OrderStatus == "Confirmed" ? "bg-primary" : order.OrderStatus == "Completed" ? "bg-success" : "bg-danger")">
+                            <span class="badge @(order.OrderStatus == "Pending" ? "bg-warning" : order.OrderStatus == "Processing" ? "bg-info" : order.OrderStatus == "Confirmed" ? "bg-primary" : order.OrderStatus == "Completed" ? "bg-success" : "bg-danger")">
                                 @order.OrderStatus
                             </span>
                         </td>
@@ -54,3 +78,30 @@
         </div>
     </div>
 </div>
+
+<!-- JavaScript for Filtering -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const orderStatusFilter = document.getElementById("order-status-filter");
+        const paymentStatusFilter = document.getElementById("payment-status-filter");
+        const orderRows = document.querySelectorAll(".order-row");
+
+        function filterOrders() {
+            let selectedOrderStatus = orderStatusFilter.value;
+            let selectedPaymentStatus = paymentStatusFilter.value;
+
+            orderRows.forEach(row => {
+                let orderStatus = row.getAttribute("data-order-status");
+                let paymentStatus = row.getAttribute("data-payment-status");
+
+                let orderMatch = selectedOrderStatus === "all" || orderStatus === selectedOrderStatus;
+                let paymentMatch = selectedPaymentStatus === "all" || paymentStatus === selectedPaymentStatus;
+
+                row.style.display = orderMatch && paymentMatch ? "" : "none";
+            });
+        }
+
+        orderStatusFilter.addEventListener("change", filterOrders);
+        paymentStatusFilter.addEventListener("change", filterOrders);
+    });
+</script>

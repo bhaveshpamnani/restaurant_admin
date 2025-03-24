@@ -14,13 +14,13 @@
         @TempData["ErrorMessage"]
     </div>
 }
+
+@model Theam.Models.DashBoardViewModel
+
 <!-- Content wrapper -->
 <div class="content-wrapper">
     <!-- Content -->
-
-    <div class=" flex-grow-1 container-p-y">
-        @model Theam.Models.DashBoardViewModel
-
+    <div class="flex-grow-1 container-p-y">
         <div class="row">
             <div class="container">
                 <div class="row">
@@ -66,21 +66,16 @@
             </div>
         </div>
 
-
         <!-- Product List Table -->
         <div class="card">
             <div class="row justify-content-between">
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-start col-md-auto">
                     <div class="dt-search m-2 mt-5">
-                        <input type="search" class="form-control ms-0" id="dt-search-0" placeholder="Search Menu Item" aria-controls="DataTables_Table_0"><label for="dt-search-0"></label>
+                        <input type="search" class="form-control ms-0" id="dt-search-0" placeholder="Search Inventory Item" aria-controls="DataTables_Table_0" onkeyup="filterTable()">
+                        <label for="dt-search-0"></label>
                     </div>
                 </div>
                 <div class="d-md-flex justify-content-between align-items-center dt-layout-end col-md-auto ms-auto px-3 mt-0">
-                    <div class="col-md-6 px-2  product_category">
-                        <select id="ProductCategory" class="form-select text-capitalize">
-                            <option value="">Category</option><option value="Household">Household</option><option value="Office">Office</option><option value="Electronics">Electronics</option><option value="Shoes">Shoes</option><option value="Accessories">Accessories</option><option value="Game">Game</option>
-                        </select>
-                    </div>
                     <div class="d-flex justify-content-end p-1 align-items-center">
                         <button class="btn btn-primary d-flex justify-content-center" data-bs-toggle="modal" data-bs-target="#addInventoryItemModal">
                             <i class="bx bx-plus"></i> Add Inventory Item
@@ -88,7 +83,7 @@
                     </div>
                 </div>
 
-                <div class="justify-content-between dt-layout-table ">
+                <div class="justify-content-between dt-layout-table">
                     <div class="d-md-flex justify-content-between align-items-center dt-layout-full table-responsive">
                         <table class="table table-striped table-bordered table-hover text-center">
                             <thead class="table-dark">
@@ -99,7 +94,7 @@
                                 <th class="cell-fit">Actions</th>
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="inventoryTableBody">
                             @foreach (var item in Model.Inventory)
                             {
                                 <tr>
@@ -107,7 +102,7 @@
                                         <div class="d-flex justify-content-start align-items-center product-name">
                                             <div class="avatar-wrapper">
                                                 <div class="avatar avatar me-2 me-sm-4 rounded-2 bg-label-secondary">
-                                                    <img src="@item.ImageURl" alt="Product-9" class="rounded">
+                                                    <img src="@item.ImageURl" alt="Product Image" class="rounded">
                                                 </div>
                                             </div>
                                             <h6 class="text-nowrap mb-0">@item.ItemName</h6>
@@ -115,13 +110,12 @@
                                     </td>
                                     <td class="text-center">@item.QuantityAvailable</td>
                                     <td class="@(item.QuantityWanted > 0 ? "text-danger text-center" : "text-center")">@item.QuantityWanted</td>
-
                                     <td>
                                         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editInventoryItemModal"
-                                            onclick="openEditModal('@item.InventoryID', '@item.ItemName', '@item.QuantityAvailable', '@item.QuantityWanted', '@item.ImageURl')">
+                                                onclick="openEditModal('@item.InventoryID', '@item.ItemName', '@item.QuantityAvailable', '@item.QuantityWanted', '@item.ImageURl')">
                                             Edit
                                         </button>
-                                        <form method="post" asp-action="DeleteInventoryItem" onsubmit="return confirm('Are you sure?')">
+                                        <form method="post" asp-action="DeleteInventoryItem" onsubmit="return confirm('Are you sure?')" style="display:inline;">
                                             <input type="hidden" name="id" value="@item.InventoryID" />
                                             <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                         </form>
@@ -136,7 +130,7 @@
         </div>
     </div>
 
-    <!-- Add Inventory Item Modal -->
+    <!-- Add Inventory Item Modal with Bootstrap Validation -->
     <div class="modal fade" id="addInventoryItemModal" tabindex="-1" aria-labelledby="addInventoryItemModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -145,32 +139,43 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form asp-action="AddInventoryItem" method="post" enctype="multipart/form-data">
+                    <form class="needs-validation" novalidate asp-action="AddInventoryItem" method="post" enctype="multipart/form-data">
                         <div class="mb-3">
-                            <label class="form-label">Item Name</label>
-                            <input type="text" name="ItemName" class="form-control" required>
+                            <label for="ItemName" class="form-label">Item Name</label>
+                            <input type="text" name="ItemName" class="form-control" id="ItemName" required>
+                            <div class="invalid-feedback">
+                                Please provide an item name.
+                            </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">QuantityAvailable</label>
-                            <input type="number" name="QuantityAvailable" class="form-control" required>
+                            <label for="QuantityAvailable" class="form-label">Quantity Available</label>
+                            <input type="number" name="QuantityAvailable" class="form-control" id="QuantityAvailable" required>
+                            <div class="invalid-feedback">
+                                Please enter the available quantity.
+                            </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">QuantityWanted</label>
-                            <input type="number" name="QuantityWanted" class="form-control" required>
+                            <label for="QuantityWanted" class="form-label">Quantity Wanted</label>
+                            <input type="number" name="QuantityWanted" class="form-control" id="QuantityWanted" required>
+                            <div class="invalid-feedback">
+                                Please enter the wanted quantity.
+                            </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Upload Image</label>
-                            <input type="file" name="ImageURL" class="form-control">
+                            <label for="ImageURL" class="form-label">Upload Image</label>
+                            <input type="file" name="ImageURL" class="form-control" id="ImageURL" required>
+                            <div class="invalid-feedback">
+                                Please upload an image.
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Add Menu Item</button>
+                        <button type="submit" class="btn btn-primary">Add Inventory Item</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-
-    <!-- Edit Menu Item Modal -->
+    <!-- Edit Inventory Item Modal with Bootstrap Validation -->
     <div class="modal fade" id="editInventoryItemModal" tabindex="-1" aria-labelledby="editInventoryItemModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -179,43 +184,53 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form asp-action="UpdateInventoryItem" method="post" enctype="multipart/form-data">
+                    <form class="needs-validation" novalidate asp-action="UpdateInventoryItem" method="post" enctype="multipart/form-data">
                         <input type="hidden" id="editInventoryID" name="InventoryID">
-                        <input type="hidden" id="editImagePath" name="ImageString">
+                        <!-- Hidden input to hold the current image URL -->
+                        <input type="hidden" id="editImagePath" name="ImageURL">
 
                         <div class="mb-3">
-                            <label class="form-label">Item Name</label>
+                            <label for="editItemName" class="form-label">Item Name</label>
                             <input type="text" id="editItemName" name="ItemName" class="form-control" required>
+                            <div class="invalid-feedback">
+                                Please provide an item name.
+                            </div>
                         </div>
-
                         <div class="mb-3">
-                            <label class="form-label">QuantityAvailable</label>
+                            <label for="editQuantityAvailable" class="form-label">Quantity Available</label>
                             <input type="number" id="editQuantityAvailable" name="QuantityAvailable" class="form-control" required>
+                            <div class="invalid-feedback">
+                                Please enter the available quantity.
+                            </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">QuantityWanted</label>
+                            <label for="editQuantityWanted" class="form-label">Quantity Wanted</label>
                             <input type="number" id="editQuantityWanted" name="QuantityWanted" class="form-control" required>
+                            <div class="invalid-feedback">
+                                Please enter the wanted quantity.
+                            </div>
                         </div>
-
                         <div class="mb-3">
                             <label class="form-label">Current Image</label>
-                            <img id="editCurrentImage" src="" alt="Menu Item Image" style="width: 100px; height: auto;">
+                            <img id="editCurrentImage" src="" alt="Inventory Item Image" style="width: 100px; height: auto;">
                         </div>
-
                         <div class="mb-3">
-                            <label class="form-label">Upload New Image (Optional)</label>
-                            <input type="file" name="ImageURL" class="form-control">
+                            <label for="editImageURL" class="form-label">Upload New Image (Optional)</label>
+                            <!-- File input renamed to "Image" to bind with IFormFile -->
+                            <input type="file" name="Image" class="form-control" id="editImageURL">
                         </div>
-
                         <button type="submit" class="btn btn-primary">Save Changes</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
     <!-- / Content -->
     <div class="content-backdrop fade"></div>
 </div>
+
+<!-- Custom Scripts -->
 <script>
     function openEditModal(inventoryId, itemName, quantityAvailable, quantityWanted, imageUrl) {
         document.getElementById("editInventoryID").value = inventoryId;
@@ -223,9 +238,37 @@
         document.getElementById("editQuantityAvailable").value = quantityAvailable;
         document.getElementById("editQuantityWanted").value = quantityWanted;
         document.getElementById('editCurrentImage').src = imageUrl;
-        document.getElementById('editImagePath').value = imageUrl; // Store existing image path
+        // Set the current image URL in the hidden field
+        document.getElementById('editImagePath').value = imageUrl;
 
         var editModal = new bootstrap.Modal(document.getElementById('editInventoryItemModal'));
         editModal.show();
     }
+
+
+    // Filter table function for inventory items
+    function filterTable() {
+        let input = document.getElementById("dt-search-0").value.toLowerCase();
+        let rows = document.querySelectorAll("#inventoryTableBody tr");
+
+        rows.forEach(row => {
+            let itemName = row.querySelector(".product-name h6").textContent.toLowerCase();
+            row.style.display = itemName.includes(input) ? "" : "none";
+        });
+    }
+
+    // Bootstrap form validation
+    (function () {
+        'use strict';
+        var forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
 </script>
